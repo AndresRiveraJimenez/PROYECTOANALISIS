@@ -8,7 +8,11 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+<<<<<<< HEAD
     <jar href="PruebaSplash.jar" size="2521269" download="eager" />
+=======
+    <jar href="PruebaSplash.jar" size="2522015" download="eager" />
+>>>>>>> a2dc24d69262efe1c72e543247687220b290661b
     <jar href="lib\TrayNotification.jar" size="41019" download="eager" />
     <jar href="lib\commons-beanutils-1.8.2.jar" size="231891" download="eager" />
     <jar href="lib\commons-collections-3.2.1.jar" size="575389" download="eager" />
