@@ -19,6 +19,7 @@ import org.andres.controladores.ControladorClientes;
 import org.andres.controladores.ControladorModificarBoleta;
 import org.andres.controladores.ControladorModificarCliente;
 import org.andres.controladores.ControladorModificarTecnico;
+import org.andres.controladores.ControladorParametrosBoletasReporte;
 import org.andres.controladores.ControladorReportes;
 import org.andres.controladores.ControladorSplashScreen;
 import org.andres.controladores.ControladorTecnico;
@@ -26,7 +27,7 @@ import org.andres.controladores.ControladorVentanaLogin;
 import org.andres.controladores.ControladorVentanaPrincipal;
 
 public class Principal extends Application{
-    
+
     private final String PAQUETE_VISTAS = "/org/andres/vistas/" ;
     private Stage escenario;
     private  Stage dialog;
@@ -43,7 +44,7 @@ public class Principal extends Application{
     public void setDialog(Stage dialog) {
         this.dialog = dialog;
     }
-    
+
     @Override
     public void start(Stage escenario) throws Exception {
       this.escenario = escenario;
@@ -107,7 +108,7 @@ public class Principal extends Application{
             ControladorAgregarCliente agregarEmpleado = (ControladorAgregarCliente) cambiarEscenaModal("ViewClienteNuevo.fxml", 382, 302,dialog);
             agregarEmpleado.setEscenarioPrincipal(this);
             dialog.initOwner(escenario);
-            dialog.initModality(Modality.APPLICATION_MODAL); 
+            dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,9 +125,9 @@ public class Principal extends Application{
             ControladorModificarCliente modificarCliente = (ControladorModificarCliente) cambiarEscenaModal("ViewModificarCliente.fxml", 382, 302,dialog);
             modificarCliente.setEscenarioPrincipal(this);
             modificarCliente.setClienteModificar(i);
-            
+
             dialog.initOwner(escenario);
-            dialog.initModality(Modality.APPLICATION_MODAL); 
+            dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,7 +153,7 @@ public class Principal extends Application{
             ControladorAgregarTecnico agregarTecnico = (ControladorAgregarTecnico) cambiarEscenaModal("ViewTecnicoNuevo.fxml", 382, 441,dialog);
             agregarTecnico.setEscenarioPrincipal(this);
             dialog.initOwner(escenario);
-            dialog.initModality(Modality.APPLICATION_MODAL); 
+            dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,15 +170,15 @@ public class Principal extends Application{
             ControladorModificarTecnico modificarTecnico = (ControladorModificarTecnico) cambiarEscenaModal("ViewTecnicoModificar.fxml", 382, 441,dialog);
             modificarTecnico.setEscenarioPrincipal(this);
             modificarTecnico.setTecnicoModificar(i);
-            
+
             dialog.initOwner(escenario);
-            dialog.initModality(Modality.APPLICATION_MODAL); 
+            dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public void ventanaBoletas(){
         try {
             ControladorBoleta ventanaBoleta = (ControladorBoleta)cambiarEscena("ViewBoleta.fxml",1110 ,597);
@@ -186,7 +187,7 @@ public class Principal extends Application{
         } catch (Exception e) {
             e.printStackTrace();
         }
-    } 
+    }
         public void ventanaAgregarBoleta() {
         try {
             escenario.setOpacity(0.95);
@@ -204,7 +205,7 @@ public class Principal extends Application{
             e.printStackTrace();
         }
     }
-       
+
         public void ventanaModificarBoleta(int i) {
         try {
             escenario.setOpacity(0.95);
@@ -224,7 +225,7 @@ public class Principal extends Application{
             e.printStackTrace();
         }
     }
-        
+
     public void ventanaReportes(){
         try {
                 ControladorReportes ventanaReportes = (ControladorReportes)cambiarEscena("ViewReportes.fxml",1110 ,597);
@@ -233,8 +234,24 @@ public class Principal extends Application{
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }        
+    } 
+        public void ventanaParametrosRepBoleta() {
+        try {
+            escenario.setOpacity(0.95);
+            Stage dialog = new Stage();
+             dialog.initStyle(StageStyle.UNDECORATED);
+             dialog.centerOnScreen();
+                setDialog(dialog);
 
+            ControladorParametrosBoletasReporte parametrosRepBoletas = (ControladorParametrosBoletasReporte) cambiarEscenaModal("ViewParametrosReporteBoletas.fxml", 382, 302,dialog);
+            parametrosRepBoletas.setEscenarioPrincipal(this);
+            dialog.initOwner(escenario);
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public Initializable cambiarEscena(String fxml, int ancho, int alto) throws IOException, Exception{
         Initializable resultado = null;
         FXMLLoader cargador = new FXMLLoader();
@@ -250,7 +267,7 @@ public class Principal extends Application{
         Initializable resultado = null;
         FXMLLoader cargador = new FXMLLoader();
         InputStream archivo = Principal.class.getResourceAsStream(PAQUETE_VISTAS + archivoFxml);
-        
+
         cargador.setBuilderFactory(new JavaFXBuilderFactory());
         cargador.setLocation(Principal.class.getResource(PAQUETE_VISTAS + archivoFxml));
         Scene escena = new Scene((AnchorPane) cargador.load(), ancho, alto);
