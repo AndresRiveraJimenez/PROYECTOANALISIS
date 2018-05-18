@@ -10,6 +10,8 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -34,21 +36,29 @@ public class ControladorAgregarBoleta implements Initializable {
     @FXML private TextField txtHoraEntrada;
     @FXML private TextField txtHoraSalida;
     @FXML private TextField txtMotivo;
-    @FXML private TextField txtCliente;
+    @FXML private ComboBox txtCliente;
     @FXML private ComboBox txtTecnico;
     @FXML private TextArea txtDescripcion;
     
     private ArrayList<Tecnico> listaTecnicos;
+    private ArrayList<Clientes> listaClientes;
     private int tecnicoEscogido;
+    private int clienteEscogido;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         agregarItemTecnicos();
+        agregarItemClientes();
     }
     
     public void agregarItemTecnicos() {
         txtTecnico.setItems(getListaTecnicos());
         txtTecnico.setValue(" ");
+    }
+    
+    public void agregarItemClientes() {
+        txtCliente.setItems(getListaClientes());
+        txtCliente.setValue(" ");
     }
 
     public ObservableList<String> getListaTecnicos() {
@@ -63,6 +73,26 @@ public class ControladorAgregarBoleta implements Initializable {
                         new Tecnico(tecnicos.getInt("idTecnico"),
                                 tecnicos.getString("nombreTecnico")));
                 lista.add(tecnicos.getString("nombreTecnico"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return   FXCollections.observableArrayList(lista);
+    }
+    
+    public ObservableList<String> getListaClientes() {
+
+        ResultSet clientes = Conexion.getInstancia().hacerConsulta("SELECT c.idCliente, c.razonSocial  FROM Clientes c where c.estado = 1");
+        listaClientes = new ArrayList<Clientes>();
+        ArrayList<String> lista = new ArrayList<String>();
+        try {
+            lista.add("");
+            while (clientes.next()) {
+                listaClientes.add(
+                        new Clientes(clientes.getInt("idCliente"),
+                                clientes.getString("razonSocial")));
+                
+                lista.add(clientes.getString("razonSocial"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -95,7 +125,7 @@ public class ControladorAgregarBoleta implements Initializable {
                 procedimiento.setString(3, txtHoraEntrada.getText());
                 procedimiento.setString(4, txtHoraSalida.getText());
                 procedimiento.setString(5, txtDescripcion.getText());
-                procedimiento.setInt(6, Integer.valueOf(txtCliente.getText()));
+                procedimiento.setInt(6, clienteEscogido);
                 procedimiento.setInt(7, tecnicoEscogido);
 
                 procedimiento.execute();
@@ -110,7 +140,7 @@ public class ControladorAgregarBoleta implements Initializable {
         }
     }
     
-    public Clientes buscarCliente(int idClienteModificar) {
+   /* public Clientes buscarCliente(int idClienteModificar) {
         Clientes resultado = null;
         try {
             PreparedStatement procedimiento = (PreparedStatement) Conexion.getInstancia().getConexion().prepareStatement("{call sp_BuscarCliente(?)}");
@@ -123,7 +153,7 @@ public class ControladorAgregarBoleta implements Initializable {
             e.printStackTrace();
         }
         return resultado;
-    }
+    }*/
     
     
     public void validarCamposGuardar() {
@@ -158,17 +188,12 @@ public class ControladorAgregarBoleta implements Initializable {
             tray.setAnimationType(AnimationType.FADE);
             tray.showAndDismiss(Duration.seconds(1));
             txtMotivo.requestFocus();
-        } else if (txtCliente.getText().isEmpty()) {
-            TrayNotification tray = new TrayNotification("ERROR", "Debes ingresar un cliente", NotificationType.ERROR);
+        } else if (seleccionarItemCliente()) {
+            TrayNotification tray = new TrayNotification("ERROR", "Debes selecionar un cliente", NotificationType.ERROR);
             tray.setAnimationType(AnimationType.FADE);
             tray.showAndDismiss(Duration.seconds(1));
             txtCliente.requestFocus();
-        } else if ( buscarCliente( Integer.valueOf(txtCliente.getText())) == null) {
-            TrayNotification tray = new TrayNotification("ERROR", "Debes ingresar un numero de cliente valido", NotificationType.ERROR);
-            tray.setAnimationType(AnimationType.FADE);
-            tray.showAndDismiss(Duration.seconds(1));
-            txtCliente.requestFocus();
-        } else if (seleccionarItemTecnico()) {
+        }  else if (seleccionarItemTecnico()) {
             TrayNotification tray = new TrayNotification("ERROR", "Debes selecionar un tecnico", NotificationType.ERROR);
             tray.setAnimationType(AnimationType.FADE);
             tray.showAndDismiss(Duration.seconds(1));
@@ -181,6 +206,41 @@ public class ControladorAgregarBoleta implements Initializable {
         }  else {
             guardarBoleta();
         }
+    }
+        
+    public boolean seleccionarItemTecnico() {
+
+        String tecnico = txtTecnico.getValue().toString();
+
+        if (tecnico.isEmpty()) {
+            return true;
+        } else {
+            for (Tecnico tec : listaTecnicos) {
+                if (tec.getNombre().equals(tecnico)) {
+                    tecnicoEscogido = tec.getIdTecnico();
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    public boolean seleccionarItemCliente() {
+
+        String cliente = txtCliente.getValue().toString();
+
+        if (cliente.isEmpty()) {
+            return true;
+        } else {
+            for (Clientes cli : listaClientes) {
+                if (cli.getRazonSocial().equals(cliente)) {
+                    clienteEscogido = cli.getIdCliente();
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
         
     public boolean validarHorayMinutos(String linea) {
@@ -211,23 +271,8 @@ public class ControladorAgregarBoleta implements Initializable {
 
         return matcher.matches();
     }
-    public boolean seleccionarItemTecnico() {
+    
 
-        String tecnico = txtTecnico.getValue().toString();
-
-        if (tecnico.isEmpty()) {
-            return true;
-        } else {
-            for (Tecnico tec : listaTecnicos) {
-                if (tec.getNombre().equals(tecnico)) {
-                    tecnicoEscogido = tec.getIdTecnico();
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
     
     public boolean validarHora(String hora) {
 
@@ -237,12 +282,6 @@ public class ControladorAgregarBoleta implements Initializable {
 
         return matcher.matches();
     }
-    
-    public void validarIdCliente() {
-        if (!txtCliente.getText().matches("\\d*")) {
-            txtCliente.clear();
-        }
-    }
-        
+            
 }
 

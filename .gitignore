@@ -1,15 +1,9 @@
-<<<<<<< HEAD
-dist/PruebaSplash.jnlp
-dist/PruebaSplash.jar
-dist/PruebaSplash.html
-build/built-jar.properties
-=======
-
-dist/PruebaSplash.jnlp
-dist/PruebaSplash.jar
-dist/PruebaSplash.html
-build/built-jar.properties
-/nbproject/private/
-/build/
-/dist/
->>>>>>> a2dc24d69262efe1c72e543247687220b290661b
+nbproject/private/
+build/
+nbbuild/
+dist/
+dist/
+build/
+nbdist/
+nbactions.xml
+nb-configuration.xml
